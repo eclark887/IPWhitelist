@@ -1,6 +1,6 @@
 PWD := $(shell pwd)
 GOBIN := $(PWD)/bin
-GOPATH := $(PWD)
+REPOPATH := $(PWD)
 GOFILES ?= $(shell find . -type f -name '*.go' -not -path "./pkg/*")
 setup:
 	GOBIN=$(GOBIN) GO111MODULE=on go get golang.org/x/tools/cmd/goimports
@@ -8,11 +8,11 @@ setup:
 
 build:
 	@echo "building IPWhitelist"
-	@GOPATH=$(GOPATH) cd ./cmd/IPWhitelistService && GOBIN=$(GOBIN) go install ./
+	@export REPOPATH=$(REPOPATH) && cd cmd/IPWServer && go run *.go
 
 test:
 	@echo "running IPWhitelist tests"
-	@ go test -v -cover -race ./...
+	@export REPOPATH=$(REPOPATH) && go test -v -cover -race ./...
 
 ensure:
 	@echo "downloading go dependencies"

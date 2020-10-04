@@ -2,8 +2,8 @@ package IPWhitelist
 
 import (
 	"testing"
-	"github.com/stretchr/testify/assert"
 
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetRecordFromIPForIP(t *testing.T) {
@@ -68,4 +68,36 @@ func TestVerifyAllowedLocale(t *testing.T) {
 
 	allowed = VerifyAllowedLocale("en")
 	assert.True(t, allowed)
+}
+
+func TestIsIPWhitelistedByLocale(t *testing.T) {
+	allowed, err := IsIPWhitelistedByLocale("50.16.108.150", "en", []string{"United States"})
+	assert.Nil(t, err)
+	assert.Equal(t, allowed, true)
+
+	allowed, err = IsIPWhitelistedByLocale("50.16.108.150", "ch", []string{"United States"})
+	assert.Equal(t, err, LocaleErr)
+	assert.Equal(t, allowed, false)
+
+	allowed, err = IsIPWhitelistedByLocale("50.16.108.150", "en", []string{"United Kingdom"})
+	assert.Nil(t, err)
+	assert.Equal(t, allowed, false)
+
+	allowed, err = IsIPWhitelistedByLocale("112", "en", []string{"United Kingdom"})
+	assert.Equal(t, err, IPFormatErr)
+	assert.Equal(t, allowed, false)
+}
+
+func TestIsIPWhitelistedByISO(t *testing.T) {
+	allowed, err := IsIPWhitelistedByISO("50.16.108.150", []string{"US", "GB", "CN"})
+	assert.Nil(t, err)
+	assert.Equal(t, allowed, true)
+
+	allowed, err = IsIPWhitelistedByISO("50.16.108.150", []string{"GB", "UK", "SA"})
+	assert.Nil(t, err)
+	assert.Equal(t, allowed, false)
+
+	allowed, err = IsIPWhitelistedByISO("112", []string{"United Kingdom"})
+	assert.Equal(t, err, IPFormatErr)
+	assert.Equal(t, allowed, false)
 }

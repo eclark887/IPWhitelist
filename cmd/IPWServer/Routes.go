@@ -1,28 +1,66 @@
-package IPWServer
+package main
 
 import (
-	"log"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
-func handleRequests() {
-	http.HandleFunc("/", homePage)
-	// k8s health checks
-	http.HandleFunc("/healthz", healthz)
-	http.HandleFunc("/livez", healthz)
-	http.HandleFunc("/readyz", healthz)
-	log.Fatal(http.ListenAndServe(":1000", nil))
+type Route struct {
+	Name        string
+	Method      string
+	Pattern     string
+	HandlerFunc http.HandlerFunc
 }
 
-func homePage(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
+type Routes []Route
+
+
+func NewRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(true)
+	for _, route := range routes {
+		var handler http.Handler
+		handler = route.HandlerFunc
+		handler = Logger(handler, route.Name)
+
+		router.
+			Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(handler)
+
+	}
+	return router
 }
 
-// k8s healthcheck
-func healthz(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-}
-
-func main() {
-	handleRequests()
+var routes = Routes{
+	Route{
+		"Index",
+		"GET",
+		"/",
+		homePage,
+	},
+	Route{
+		"Healthz",
+		"GET",
+		"/healthz",
+		healthz,
+	},
+	Route{
+		"Healthz",
+		"GET",
+		"/livez",
+		healthz,
+	},
+	Route{
+		"Healthz",
+		"GET",
+		"/readyz",
+		healthz,
+	},
+	Route{
+		"IPWhitelist",
+		"POST",
+		"/ipwhitelist",
+		postIPWhitelist,
+	},
 }

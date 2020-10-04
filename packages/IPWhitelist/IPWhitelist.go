@@ -2,10 +2,12 @@ package IPWhitelist
 
 import (
 	"errors"
-	geoip2 "github.com/oschwald/geoip2-golang"
 	"log"
 	"net"
-	)
+	"os"
+
+	geoip2 "github.com/oschwald/geoip2-golang"
+)
 
 var IPFormatErr = errors.New("the IP is incorrectly formatted")
 var LocaleErr = errors.New("locale string is not allowed")
@@ -16,12 +18,14 @@ func GetRecordFromIP(IP string) (*geoip2.Country, error) {
 		return nil, IPFormatErr
 	}
 	// TODO move the open & close to separate functions so we can manage the connections & use a pool for connections to cut down overhead of opening the file
-	db, err := geoip2.Open("GeoLite2-Country.mmdb")
-	defer db.Close()
+	rootdir := os.Getenv("REPOPATH")
+	db, err := geoip2.Open(rootdir + "/packages/IPWhitelist/GeoLite2-Country.mmdb")
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
+	defer db.Close()
+
 	record, err := db.Country(ip)
 	if err != nil {
 		log.Println(err)
@@ -53,4 +57,28 @@ func find(slice []string, val string) bool {
 		}
 	}
 	return false
+}
+
+func IsIPWhitelistedByLocale(ip string, locale string, countries []string) (bool, error) {
+	if !VerifyAllowedLocale(locale) {
+		return false, LocaleErr
+	}
+	record, err := GetRecordFromIP(ip)
+	if err != nil {
+		return false, err
+	}
+	country, err := GetCountryNameFromRecord(record, locale)
+	if err != nil {
+		return false, err
+	}
+	return find(countries, country), nil
+}
+
+func IsIPWhitelistedByISO(ip string, countries []string) (bool, error) {
+	record, err := GetRecordFromIP(ip)
+	if err != nil {
+		return false, err
+	}
+	country := GetISOFromRecord(record)
+	return find(countries, country), nil
 }
