@@ -11,6 +11,11 @@ This project serves an API that takes in an IP and a whitelist of countries and 
 * make test - to run the unit & integration tests
 * make fmt - to run the linting
 
+#How to setup locally (With Docker)
+* docker-compose up -d ip_whitelist_service
+* It will take a minute to download the deps
+* The server can be accessed on http://localhost:8080
+
 #API
 POST /ipwhitelist
 Content-type application/json

@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  ip_whitelist_service:
+    image: golang:1.15
+    command: make dockerbuild
+    environment:
+      - REPOPATH=/go/src/ipw
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/go/src/ipw
+    working_dir: /go/src/ipw

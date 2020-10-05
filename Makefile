@@ -10,6 +10,12 @@ build:
 	@echo "building IPWhitelist"
 	@export REPOPATH=$(REPOPATH) && cd cmd/IPWServer && go run *.go
 
+dockerbuild:
+	@echo "downloading go dependencies"
+	@ go mod download
+	@echo "building IPWhitelist"
+	@export REPOPATH=$(REPOPATH) && cd cmd/IPWServer && go run *.go
+
 test:
 	@echo "running IPWhitelist tests"
 	@export REPOPATH=$(REPOPATH) && go test -v -cover -race ./...
