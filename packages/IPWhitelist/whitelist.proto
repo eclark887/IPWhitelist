@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package whitelist.v1;
+
+option go_package = ".;IPWhitelist";
+
+message WhitelistData {
+   oneof data_type {
+      bool iso = 1;
+      string locale = 2;
+  }
+  string ip = 3;
+  repeated string country = 4;
+}
+
+message WhitelistReturn {
+    string ip_is_whitelisted = 1;
+    string error = 2;
+}
+
+
+

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"strings"
 	"net/http"
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 )
 
 type Route struct {
@@ -13,6 +15,17 @@ type Route struct {
 }
 
 type Routes []Route
+
+
+func httpGrpcRouter(grpcServer *grpc.Server, httpHandler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+		grpcServer.ServeHTTP(w, r)
+		} else {
+		httpHandler.ServeHTTP(w, r)
+		}
+	})
+}
 
 
 func NewRouter() *mux.Router {
