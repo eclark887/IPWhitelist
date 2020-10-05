@@ -73,7 +73,7 @@ var routes = Routes{
 	Route{
 		"IPWhitelist",
 		"POST",
-		"/ipwhitelist",
+		"/api/v1/ipwhitelist",
 		postIPWhitelist,
 	},
 }

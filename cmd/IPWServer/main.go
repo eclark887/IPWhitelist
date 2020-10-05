@@ -20,8 +20,6 @@ func main() {
 	if err = IPW.RegisterWhitelistServiceHandler(context.Background(), router, conn); err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
-	//log.Fatal(http.ListenAndServe(":8080", router))
-
 	log.Fatal(http.ListenAndServe(":8080",  httpGrpcRouter(grpcServer, router)))
 }
 
