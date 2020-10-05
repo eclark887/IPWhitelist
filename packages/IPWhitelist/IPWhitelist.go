@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
-
+	"strings"
 	geoip2 "github.com/oschwald/geoip2-golang"
 )
 
@@ -52,7 +52,7 @@ func VerifyAllowedLocale(locale string) bool {
 
 func find(slice []string, val string) bool {
 	for _, item := range slice {
-		if item == val {
+		if strings.ToLower(item) == strings.ToLower(val) {
 			return true
 		}
 	}
@@ -60,6 +60,7 @@ func find(slice []string, val string) bool {
 }
 
 func IsIPWhitelistedByLocale(ip string, locale string, countries []string) (bool, error) {
+	locale = strings.ToLower(locale)
 	if !VerifyAllowedLocale(locale) {
 		return false, LocaleErr
 	}

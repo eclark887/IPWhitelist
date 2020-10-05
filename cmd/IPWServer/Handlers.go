@@ -21,18 +21,25 @@ func postIPWhitelist(w http.ResponseWriter, r *http.Request) {
 	var data postData
 	err := decoder.Decode(&data)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(400)
+		return
 	}
 	var allowed bool
 	if data.ISO {
 		allowed, err = IPW.IsIPWhitelistedByISO(data.IP, data.Whitelist)
 	} else {
+		if data.Locale == "" {
+			data.Locale = "en"
+		}
 		allowed, err = IPW.IsIPWhitelistedByLocale(data.IP, data.Locale, data.Whitelist)
 	}
-
+	var errorString string
+	if err != nil {
+		errorString = err.Error()
+	}
 	returnData := IPWhitelistReturn{
 		allowed,
-		err,
+		errorString,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(returnData)
@@ -46,7 +53,7 @@ type postData struct {
 }
 
 type IPWhitelistReturn struct {
-	IPInWhitelist bool 	`json:"ip_in_whitelist"`
-	err error			`json:"error"`
+	IPInWhitelist bool 		`json:"ip_is_whitelisted"`
+	Error string			`json:"error"`
 
 }
