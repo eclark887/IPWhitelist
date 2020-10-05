@@ -50,3 +50,4 @@ Source: https://hub.docker.com/r/maxmindinc/geoipupdate
 * Adding an integration for a CI/CD platform (Semaphore, Jenkins, CircleCI to run the unit tests on PRs)
 * Postman team collection & postman tests. Automation tests for staging to be ran before any releases to prod
 * Documentation on Confluence or whatever internal documentation platform the company uses
+* Finish the addition of the gRPC integration.  The function RegisterWhitelistServiceHandler in the IPWhitelist package needs to be filled out

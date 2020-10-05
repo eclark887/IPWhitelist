@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterWhitelistServiceHandler(ctx context.Context, mux *mux.Router, conn *grpc.ClientConn) error {
-	return nil
+	return nil // TODO this needs to be filled out
 }
 
 
