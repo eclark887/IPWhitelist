@@ -20,7 +20,7 @@ This project serves an API that takes in an IP and a whitelist of countries and 
 * protoc -I IPWhitelist/ IPWhitelist/whitelist.proto --go_out=plugins=grpc:IPWhitelist
 
 #API
-POST /ipwhitelist
+POST /api/v1/ipwhitelist
 Content-type application/json
 {
 Locale (string, optional)
